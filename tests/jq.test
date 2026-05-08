@@ -2618,3 +2618,11 @@ jq: error: to_string/0 is not defined at <top-level>, line 1, column 1:
 jq: error: $x is not defined at <top-level>, line 1, column 11:
     1 as $X | $x
               ^^
+# regression test for CVE-2026-43896
+reduce range(10000) as $_ ({}; {a: .}) as $x | $x * $x | length
+null
+1
+
+try (reduce range(10001) as $_ ({}; {a: .}) as $x | $x * $x) catch .
+null
+"Object merge too deep"
